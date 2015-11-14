@@ -10,12 +10,16 @@ import io, os, subprocess, wave
 import audioop
 import platform, stat
 import json
+import apiKey
 
 try: # try to use python2 module
     from urllib2 import Request, urlopen, URLError, HTTPError
 except ImportError: # otherwise, use python3 module
     from urllib.request import Request, urlopen
     from urllib.error import URLError, HTTPError
+
+# constants
+API_KEY = 'api.key'
 
 # define exceptions
 class WaitTimeoutError(Exception): pass
@@ -186,7 +190,7 @@ class Recognizer(AudioSource):
         assert isinstance(language, str), "`language` must be a string"
 
         flac_data, sample_rate = audio_data.get_flac_data(), audio_data.sample_rate
-        if key is None: key = "AIzaSyC3oJmr9u2NBsSHZbcvowmwxpXczTtO2_Y"
+        if key is None: key = apiKey.getKey(API_KEY)
         url = "http://www.google.com/speech-api/v2/recognize?client=chromium&lang={0}&key={1}".format(language, key)
         request = Request(url, data = flac_data, headers = {"Content-Type": "audio/x-flac; rate={0}".format(sample_rate)})
 
