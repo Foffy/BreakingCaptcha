@@ -12,7 +12,6 @@ import sys
 import struct
 import os
 import time
-import httplib
 from random import randint
 
 

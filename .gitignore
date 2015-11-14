@@ -58,4 +58,6 @@ target/
 
 # API key
 api.key
-.DS_Store
+
+# Stupid DS_Store
+*.DS_Store

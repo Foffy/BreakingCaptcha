@@ -64,10 +64,9 @@ def _trackeback(D):
 def k_nearest(sound, dir, k=5):
     y1, sr1 = librosa.load(sound)
     known = librosa.feature.mfcc(y1, sr1)
-
     dists = []
     for dirName, subdirList, fileList in os.walk(dir):
-        for fName in fileList:
+        for fName in filter(lambda x: x.endswith(".wav"), fileList):
             unknownPath = "{}/{}".format(dirName, fName)
             unknown_y1, unknown_sr1 = librosa.load(unknownPath)
             unknown = librosa.feature.mfcc(unknown_y1, unknown_sr1)
