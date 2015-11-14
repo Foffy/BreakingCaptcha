@@ -58,3 +58,4 @@ target/
 
 # API key
 api.key
+.DS_Store
