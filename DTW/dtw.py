@@ -1,6 +1,9 @@
 from numpy import array, zeros, argmin, inf
 from numpy.linalg import norm
 
+import librosa
+import os
+
 
 def dtw(x, y, dist=lambda x, y: norm(x - y, ord=1)):
     """ Computes the DTW of two sequences.
@@ -57,3 +60,19 @@ def _trackeback(D):
     p.insert(0, 0)
     q.insert(0, 0)
     return (array(p), array(q))
+    
+def k_nearest(sound, dir, k=5):
+    y1, sr1 = librosa.load(sound)
+    known = librosa.feature.mfcc(y1, sr1)
+
+    dists = []
+    for dirName, subdirList, fileList in os.walk(dir):
+        for fName in fileList:
+            unknownPath = "{}/{}".format(dirName, fName)
+            unknown_y1, unknown_sr1 = librosa.load(unknownPath)
+            unknown = librosa.feature.mfcc(unknown_y1, unknown_sr1)
+            dist, cost, path = dtw(known.T, unknown.T)
+            dists.append((dirName[-1:], dist))
+
+    dists.sort(key=lambda x: x[1])
+    return dists[:k]
