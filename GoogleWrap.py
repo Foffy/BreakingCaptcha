@@ -19,7 +19,7 @@ except ImportError: # otherwise, use python3 module
     from urllib.error import URLError, HTTPError
 
 # constants
-API_KEY = 'api.key'
+API_KEY = 'googleAPI.key'
 
 # define exceptions
 class WaitTimeoutError(Exception): pass

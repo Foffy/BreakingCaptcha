@@ -1,18 +1,25 @@
+import sys
 import CloudConvert
 import os
 from os import path
+import apiKey
+
+
+input_file = 'audio.mp3'
+output_file = 'out.mp3'
+api_key = ''
+
+API_KEY = 'cloudconvertAPI.key'
 
 dir_path = path.dirname(path.realpath(__file__))
 
-apikey = "etDaoyH4mcong3nlNXZnSUeXUwe0y4_W1VgzW_-aRqufBhVbZPwEh1yA7qbodpVlFWUTJJpHRjeHFFh08ru73g"
-
-process = CloudConvert.ConversionProcess(apikey)
+process = CloudConvert.ConversionProcess(apiKey.getKey(API_KEY))
 
 # This should autodetect file extension. if not, you can
 # always set process.fromformat and .toformat to the correct
 # values
 
-process.init(path.join(dir_path, "audio.mp3"), "out.wav")
+process.init(input_file, output_file)
 
 # This step uploads the file and starts the conversion.
 # If you pass `wait=True` the request will block until the
