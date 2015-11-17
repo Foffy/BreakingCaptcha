@@ -17,5 +17,5 @@ if __name__ == "__main__":
 	if args.file_path == None or args.output_file == None:
 		raise argparse.ArgumentError(file_arg, "Remember input file and output file!")
 
-	key = apiKey.getKey(args.key_file)
+	key = apiKey.getKey("Keys/"+args.key_file)
 	converts.mp3_to_wav(args.file_path, args.output_file, key)
