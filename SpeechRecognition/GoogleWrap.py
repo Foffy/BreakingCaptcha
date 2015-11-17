@@ -181,7 +181,7 @@ class Recognizer(AudioSource):
     def recognize_google(self, audio_data, key, language = "en-US", show_all = False):
         
         assert isinstance(audio_data, AudioData), "`audio_data` must be audio data"
-        assert key is None or isinstance(key, str), "`key` must be `None` or a string"
+        assert isinstance(key, str), "`key` must be `None` or a string"
         assert isinstance(language, str), "`language` must be a string"
 
         flac_data, sample_rate = audio_data.get_flac_data(), audio_data.sample_rate

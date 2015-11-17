@@ -1,4 +1,4 @@
- import glob, os
+import glob, os
 import SpeechRecognition.GoogleWrap as sr
 import SpeechRecognition.dictionary as dico
 import Keys.apiKey as apiKey
@@ -8,7 +8,7 @@ import Keys.apiKey as apiKey
 from os import path
 
 def google_speech(k):
-	key = apiKey.getKey(k)
+	api_key = apiKey.getKey(k)
 
 	dir_path = path.dirname(path.realpath(__file__)) + "/Sounds/"
 
@@ -36,12 +36,14 @@ def google_speech(k):
 			    # for testing purposes, we're just using the default API key
 			    # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
 			    # instead of `r.recognize_google(audio)`
-			    values.append(r.recognize_google(audio), key)
+			    values.append(r.recognize_google(audio, api_key))
 			    #print "Google Speech Recognition thinks you said " + r.recognize_google(audio) + " for", key
 			except sr.UnknownValueError:
 			    print "Google Speech Recognition could not understand audio for", key
 			except sr.RequestError as e:
 			    print "Could not request results from Google Speech Recognition service; {0}".format(e)
+
+	check_dictionary(values)
 
 def check_dictionary(values):
 	#now we check if our list have only digits
@@ -60,7 +62,7 @@ def RepresentsInt(s):
     except ValueError:
         return False
 
-google_speech('keys/google.key')
+google_speech('Keys/google.key')
 
 
 
