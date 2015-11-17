@@ -1,9 +1,7 @@
-#!/usr/bin/env python2.7
-
 """Library for performing speech recognition (transcribtion) with support for Google Speech Recognition"""
 
-__author__ = "Ionel Moreau-Serez"
-__version__ = "1.0"
+__author__ = "Anthony Zhang (Uberi)"
+__version__ = "3.1.3"
 __license__ = "BSD"
 
 import io, os, subprocess, wave
