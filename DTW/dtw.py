@@ -1,10 +1,8 @@
 from numpy import array, zeros, argmin, inf
 from numpy.linalg import norm
 
-# import librosa
+import librosa
 import os
-
-print( "klb: running module")
 
 def dtw(x, y, dist=lambda x, y: norm(x - y, ord=1)):
     """ Computes the DTW of two sequences.
@@ -14,7 +12,6 @@ def dtw(x, y, dist=lambda x, y: norm(x - y, ord=1)):
     Returns the minimum distance, the accumulated cost matrix and the wrap path.
     """
 
-    print( "klb: running dtw.dtw")
     x = array(x)
     if len(x.shape) == 1:
         x = x.reshape(-1, 1)
@@ -44,7 +41,6 @@ def dtw(x, y, dist=lambda x, y: norm(x - y, ord=1)):
 
 
 def _trackeback(D):
-    print( "klb: running _trackeback")
     i, j = array(D.shape) - 1
     p, q = [i], [j]
     while (i > 0 and j > 0):
@@ -64,9 +60,14 @@ def _trackeback(D):
     p.insert(0, 0)
     q.insert(0, 0)
     return (array(p), array(q))
-    
+
+
 def k_nearest(sound, dir, k=5):
-    print( "klb: running k_nearest")
+    """ Computes the k nearest digits to the sound.
+    MFCC is calculated for the two sounds and passed to dtw() for comparison
+    :param string sound: Path to .wav input file
+    :param string dir: Path to directory of known sounds   
+    """
     y1, sr1 = librosa.load(sound)
     known = librosa.feature.mfcc(y1, sr1)
     dists = []
@@ -80,5 +81,3 @@ def k_nearest(sound, dir, k=5):
 
     dists.sort(key=lambda x: x[1])
     return dists[:k]
-
-print( "klb: EOF")

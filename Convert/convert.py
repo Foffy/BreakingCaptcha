@@ -1,8 +1,11 @@
-import sys
-import os
 import Convert.CloudConvert as CloudConvert
 
 def mp3_to_wav(fin, fout, key):
+	""" Convert .mp3 to .wav using CloudConvert
+	:param string fin: Path to .mp3 file
+	:param string fout: Path to output .wav file
+	:param string key: API key for using CloudConvert
+	"""
 	input_file = fin
 	output_file = fout
 
@@ -19,8 +22,6 @@ def mp3_to_wav(fin, fout, key):
 	# conversion is finished.
 	process.start()
 
-	print("Start conversion from", process.fromformat, "to", process.toformat)
-	
 	process.wait_for_completion()
 
 	process.save()

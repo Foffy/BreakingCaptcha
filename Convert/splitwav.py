@@ -15,7 +15,7 @@ import time
 from random import randint
 
 
-def run(fin):
+def load_file(fin):
 	ip = wave.open(fin, 'r')
 	info = ip.getparams()
 	frame_list = []
@@ -24,15 +24,25 @@ def run(fin):
 		amplitude = struct.unpack('<h', sframe)[0]
 		frame_list.append(amplitude)
 	ip.close()
+
 	for i in range(0,len(frame_list)):
 		if abs(frame_list[i]) < 25:
 			frame_list[i] = 0
-	################################  Find Out most louder portions of the audio file ###########################
+
+	return info, frame_list
+
+
+def get_chunks(info, frame_list):
+	"""
+	Detect loud parts of the sound file and seperate them into chunks
+	:param
+	"""
 	thresh = 30
 	output = []
 	nonzerotemp = []
 	length = len(frame_list)
 	i = 0
+
 	while i < length:
 	    zeros = []
 	    while i < length and frame_list[i] == 0:
