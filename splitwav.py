@@ -19,6 +19,7 @@ ip = wave.open("out.wav", 'r')
 info = ip.getparams()
 frame_list = []
 for i in range(ip.getnframes()):
+	print i, ip.getnframes()
 	sframe = ip.readframes(1)
 	amplitude = struct.unpack('<h', sframe)[0]
 	frame_list.append(amplitude)
