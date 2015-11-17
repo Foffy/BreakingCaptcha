@@ -5,7 +5,9 @@ def run(module, fin, fout, key):
 	# print module, fin, fout, key
 
 	if module == "dtw":
-		import DTW.dtw
+		import DTW.dtw as dtw
+		
+
 
 if __name__ == "__main__":
 	import argparse
