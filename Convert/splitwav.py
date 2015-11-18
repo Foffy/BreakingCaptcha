@@ -16,6 +16,12 @@ from random import randint
 
 
 def load_file(fin):
+	"""
+	Load data from target .wav file
+	:param fin: Path to target .wav file
+	:return info: Parameters of .wav file
+	:return frame_list: List of frames for .wav file
+	"""
 	ip = wave.open(fin, 'r')
 	info = ip.getparams()
 	frame_list = []
@@ -35,7 +41,9 @@ def load_file(fin):
 def get_chunks(info, frame_list):
 	"""
 	Detect loud parts of the sound file and seperate them into chunks
-	:param
+	:param info: Parameters of .wav file
+	:param frame_list: List of frames for .wav file
+	:return chunks: List of sound chunks
 	"""
 	thresh = 30
 	output = []
@@ -64,14 +72,22 @@ def get_chunks(info, frame_list):
 	for j in range(0,len(output)):
 		if len(output[j]) > 3000:
 			chunks.append(output[j])
-	#########################################################################################################
 
+
+	return chunks
+
+def modify_chunks(chunks, inc_percent = 1):
+	"""
+	Modify size of chunks by a set amount (default: 10%)
+	:param chunks: List of sound chunks
+	:param inc_percent: Modify chunks by inc_percent
+	:return chunks: List of modified sound chunks
+	"""
 	for l in chunks:
 		for m in range(0,len(l)):
 			if l[m] == 0:
 				 l[m] = randint(-0,+0)
 
-	inc_percent = 1	#10 percent
 
 	for l in chunks:
 		for m in range(0,len(l)):
@@ -82,8 +98,15 @@ def get_chunks(info, frame_list):
 				#positive vaule
 				l[m] =     abs(l[m]) + abs(l[m])*inc_percent/100
 
-	########################################################
+	return chunks
 
+def split_wav(info, chunks, out):
+	"""
+	Stores all chunks in seperate .wav files
+	:param info: Parameters for .wav files
+	:param chunks: List of sound chunks
+	:param out: Directory to store output .wav files
+	"""
 	# Below code generates separate wav files depending on the number of loud voice detected.
 
 	NEW_RATE = 1 #Change it to > 1 if any amplification is required
@@ -92,14 +115,15 @@ def get_chunks(info, frame_list):
 	for i in range(0, len(chunks)):
 		new_frame_rate = info[0]*NEW_RATE
 		#print '[+] Creating No. ',str(i),'file..'
-		split = wave.open("Sounds/" + str(i)+'.wav', 'w')
+		split = wave.open(out + str(i)+'.wav', 'w')
 		split.setparams((info[0],info[1],info[2],0,info[4],info[5]))
 	#	split.setparams((info[0],info[1],new_frame_rate,0,info[4],info[5]))
 
-		#Add some silence at start selecting +15 to -15
+		#Add some silence at start selecting
 		for k in range(0,10000):
 			single_frame = struct.pack('<h', randint(-25,+25))
 			split.writeframes(single_frame)
+
 		# Add the voice for the first time
 		for frames in chunks[i]:
 			single_frame = struct.pack('<h', frames)
@@ -110,14 +134,9 @@ def get_chunks(info, frame_list):
 			single_frame = struct.pack('<h', randint(-25,+25))
 			split.writeframes(single_frame)
 
-		# Repeat effect :  Add the voice second time
-		#for frames in chunks[i]:
-		#	single_frame = struct.pack('<h', frames)
-		#	split.writeframes(single_frame)
-
 		#Add silence at end
 		for k in range(0,10000):
 			single_frame = struct.pack('<h', randint(-25,+25))
 			split.writeframes(single_frame)
 
-		split.close() #Close each files
+		split.close()
