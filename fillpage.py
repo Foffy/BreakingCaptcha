@@ -14,13 +14,12 @@ def open_site(driver):
     try:
         element = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "recaptcha_switch_audio_btn")))
     except TimeoutException:
-        print "Timed out. (open_site)"
+        print "Timed out. (open_site). Retrying."
     element.click()
     try:
         element.click() # Sometimes the first click only puts focus on the browser window.
     except:
         driver.quit()
-
 
 
 def get_mp3(driver):
@@ -33,7 +32,7 @@ def get_mp3(driver):
     try:
         WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "recaptcha_audio_download")))
     except TimeoutException:
-        print "Timed out (get_mp3)"
+        print "Timed out (get_mp3). Retrying."
         return False
 
     mp3 = driver.find_element_by_id("recaptcha_audio_download")
@@ -41,6 +40,7 @@ def get_mp3(driver):
     req = urllib2.Request(url)
     response = urllib2.urlopen(req)
 
+    print "mp3 successfully located"
     return response
 
 def write_mp3(response, fout="audio.mp3"):
@@ -53,6 +53,7 @@ def write_mp3(response, fout="audio.mp3"):
     fid = open(fout, "w")
     fid.write(data)
     fid.close()
+    print "{} successfully downloaded and saved".format(fout)
 
 def push_response(driver, answer):
     """
@@ -60,20 +61,8 @@ def push_response(driver, answer):
     :param driver: The browser driver to use
     :param response: The string to submit
     """
-    text = driver.find_element_by_id('recaptcha_response_field')
+    text = driverself.find_element_by_id('recaptcha_response_field')
     text.send_keys(answer)
 
-    next = driver.find_element_by_name('submit')
-    next.click()
-
-
-driver = webdriver.Chrome()
-driver.get("http://webinsight.cs.washington.edu/projects/audiocaptchas/")
-
-done = False
-while not done:
-    open_site(driver)
-    re = get_mp3(driver)
-    if re:
-        write_mp3(re)
-        done = True
+    sub = driver.find_element_by_name('submit')
+    sub.click()

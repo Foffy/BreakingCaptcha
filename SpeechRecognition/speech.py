@@ -1,16 +1,11 @@
 import glob, os
-import SpeechRecognition.GoogleWrap as sr
-import SpeechRecognition.dictionary as dico
-import Keys.apiKey as apiKey
+import GoogleWrap as sr
 
 
 # obtain path to "test.wav" in the same folder as this script
 from os import path
 
-def google_speech(k):
-	api_key = apiKey.getKey(k)
-
-	dir_path = path.dirname(path.realpath(__file__)) + "/Sounds/"
+def google_speech(api_key, din):
 
 	i = 0
 	number_list = {'jack': 4098}
@@ -19,8 +14,7 @@ def google_speech(k):
 	values = []
 
 	#for listing all files in directory (could be useful)
-	os.chdir(dir_path)
-	for file in glob.glob("*.wav"):
+	for file in glob.glob(din+"*.wav"):
 	    number_list[i] = file
 	    i = i + 1
 
@@ -36,34 +30,15 @@ def google_speech(k):
 			    # for testing purposes, we're just using the default API key
 			    # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
 			    # instead of `r.recognize_google(audio)`
-			    values.append(r.recognize_google(audio, api_key))
+			    value = r.recognize_google(audio, api_key)
+			    values.append(str(value))
 			    #print "Google Speech Recognition thinks you said " + r.recognize_google(audio) + " for", key
 			except sr.UnknownValueError:
-			    print "Google Speech Recognition could not understand audio for", key
+				values.append(None)
+			    #print "Google Speech Recognition could not understand audio for", key
 			except sr.RequestError as e:
 			    print "Could not request results from Google Speech Recognition service; {0}".format(e)
 
-	check_dictionary(values)
-
-def check_dictionary(values):
-	#now we check if our list have only digits
-	for x in values:
-		if RepresentsInt(x):
-			print x
-		elif x in dico.badaboum:
-			print dico.badaboum[x]
-		else:
-	   		print x
-
-def RepresentsInt(s):
-    try: 
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-google_speech('Keys/google.key')
-
-
+	return values
 
 		

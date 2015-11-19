@@ -1,12 +1,3 @@
-'''
-Quick and dirty way to generate separate wav files depending on the loud voice detected in audio captcha challenge.
-Lots of room for improvement.
-What is Does:
-1. Minor noise removal.
-2. Detect louder voices in input wav file
-3. Depending on the number of loud voice detected it splits the main wav file.
-'''
-
 import wave
 import sys
 import struct
@@ -80,14 +71,14 @@ def modify_chunks(chunks, inc_percent = 1):
 	"""
 	Modify size of chunks by a set amount (default: 10%)
 	:param chunks: List of sound chunks
-	:param inc_percent: Modify chunks by inc_percent
+	:param inc_percent: Amount to enlarge chunks
 	:return chunks: List of modified sound chunks
 	"""
+
 	for l in chunks:
 		for m in range(0,len(l)):
 			if l[m] == 0:
 				 l[m] = randint(-0,+0)
-
 
 	for l in chunks:
 		for m in range(0,len(l)):
@@ -107,17 +98,13 @@ def split_wav(info, chunks, out):
 	:param chunks: List of sound chunks
 	:param out: Directory to store output .wav files
 	"""
-	# Below code generates separate wav files depending on the number of loud voice detected.
 
-	NEW_RATE = 1 #Change it to > 1 if any amplification is required
+	NEW_RATE = 1
 
-	#print '[+] Possibly ',len(chunks),'number of loud voice detected...'
 	for i in range(0, len(chunks)):
 		new_frame_rate = info[0]*NEW_RATE
-		#print '[+] Creating No. ',str(i),'file..'
 		split = wave.open(out + str(i)+'.wav', 'w')
 		split.setparams((info[0],info[1],info[2],0,info[4],info[5]))
-	#	split.setparams((info[0],info[1],new_frame_rate,0,info[4],info[5]))
 
 		#Add some silence at start selecting
 		for k in range(0,10000):
