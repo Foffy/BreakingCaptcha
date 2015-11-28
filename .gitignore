@@ -60,5 +60,9 @@ target/
 # API key
 *.key
 
+# Temp files
+values.b
+trash
+
 # Stupid DS_Store
 *.DS_Store

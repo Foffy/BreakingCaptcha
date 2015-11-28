@@ -1,0 +1,14 @@
+* Sometimes an "empty sound" is being saved as an actual sound of an integer.
+	- splitwav.py: Low-pass filter
+	- DTW: If distance is too great to anything, remove it from the list of values (>300 should be discarded)
+
+* DTW is slow.
+	- Precompute clusters (x-means or k-means with k=10)
+	- Parallelise the distance computations
+
+* Dictionary is in a file
+	- move it to pickle object
+	- create interface for adding solutions to the dictionary
+
+* Difficulties in breaking longer CAPTCHA (cybrary)
+	- moar data

@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 import urllib2
+import re
 
 def open_site(driver):
     """
@@ -12,15 +13,28 @@ def open_site(driver):
     :param driver: The browser driver to use
     """
     try:
-        element = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, "recaptcha_switch_audio_btn")))
+        element = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "recaptcha_switch_audio_btn")))
+        element.click()
     except TimeoutException:
         print "Timed out. (open_site). Retrying."
-    element.click()
     try:
         element.click() # Sometimes the first click only puts focus on the browser window.
     except:
         driver.quit()
 
+def push_information(driver):
+    name_field = driver.find_element_by_id("signup_username")
+    email_field = driver.find_element_by_id("signup_email_first")
+    email_confirm_field = driver.find_element_by_id("signup_email")
+    password_field = driver.find_element_by_id("signup_password")
+    password_confirm_field = driver.find_element_by_id("signup_password_confirm")
+
+
+    name_field.send_keys("Johnny")
+    email_field.send_keys("johnny@johnson.john")
+    email_confirm_field.send_keys("johnny@johnson.john")
+    password_field.send_keys("123456")
+    password_confirm_field.send_keys("123456")
 
 def get_mp3(driver):
     """
@@ -30,7 +44,7 @@ def get_mp3(driver):
     :return response: Data of mp3 file
     """
     try:
-        WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "recaptcha_audio_download")))
+        WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.ID, "recaptcha_audio_download")))
     except TimeoutException:
         print "Timed out (get_mp3). Retrying."
         return False
@@ -61,8 +75,18 @@ def push_response(driver, answer):
     :param driver: The browser driver to use
     :param response: The string to submit
     """
-    text = driverself.find_element_by_id('recaptcha_response_field')
+    text = driver.find_element_by_id('recaptcha_response_field')
     text.send_keys(answer)
 
-    sub = driver.find_element_by_name('submit')
-    sub.click()
+    submit_button = driver.find_element_by_id("submit")
+    submit_button.click()
+    wait = WebDriverWait(driver, 1)
+
+    src = driver.page_source
+    text_found = re.search(r'You got it!', src)
+    if text_found:
+        print "Completed! CAPTCHA was: {}".format(answer)
+        return True
+    else:
+        return False
+

@@ -1,8 +1,18 @@
 from numpy import array, zeros, argmin, inf
 from numpy.linalg import norm
-
-import librosa
 import os
+
+
+import sys
+
+with open('trash', 'w') as f:
+    so, se = sys.stdout, sys.stderr
+    sys.stdout = f
+    sys.stderr = f
+    import librosa
+    sys.stdout, sys.stderr = so, se
+
+
 
 def dtw(x, y, dist=lambda x, y: norm(x - y, ord=1)):
     """ Computes the DTW of two sequences.

@@ -1,4 +1,6 @@
-from subprocess import call
+import subprocess
+import cPickle
+
 from selenium import webdriver
 import fillpage
 import Keys.apiKey as apiKey
@@ -12,6 +14,9 @@ def break_CAPTCHA(url, speech_key, convert_key):
 	driver = webdriver.Chrome()
 	driver.get(url)
 
+	# print "Populating registration fields"
+	# fillpage.push_information(driver)
+
 	done = False
 	while not done:
 	    fillpage.open_site(driver)
@@ -21,8 +26,16 @@ def break_CAPTCHA(url, speech_key, convert_key):
 	        done = True
 
 	print "Converting mp3 to wav"
-	call(["python", "conv.py"])
+	
+	args = ' '.join(
+			['ffmpeg',
+			'-y', 						# force overwrite if output file exists
+			'-loglevel fatal',			# suppress log output unless fatal
+			'-i audio.mp3',				# input file
+			'out.wav'					# output file
+			])
 
+	subprocess.Popen(args, shell=True).wait()
 
 	#Split wav to multiple wavs
 	info, frames = splitwav.load_file("out.wav")
@@ -40,30 +53,49 @@ def break_CAPTCHA(url, speech_key, convert_key):
 	for x in range(len(values)):
 		if not isinstance(values[x], int):
 			if values[x] in sd.google_dict:
-				values[x] = sd.google_dict[values[x]]
+				values[x] = str(sd.google_dict[values[x]])
 
 	print "After dictionary lookup, result is: {}".format(values)
 
-	# Store values on disk
-	fid = open("values", "w")
-	for x in range(len(values)):
-		if x == 0:
-			fid.write("{}".format(values[x]))
-		else:
-			fid.write(",{}".format(values[x]))
-			
-	fid.close()
+	# Store values on disk using cPickle
+	with open('values.b', 'wb') as v_file:
+		cPickle.dump(values, v_file)
 
 	# DTW
-	call(["python", "doDTW.py"])
+	args = ' '.join(
+		['python',
+		'doDTW.py',
+		'-i values.b',
+		 ])
+
+	subprocess.Popen(args, shell=True).wait()
+	with open('values.b', 'rb') as v_file:
+		values = cPickle.load(v_file)
+	print "After DTW, result is {}".format(values)
 
 
 	# Send answer to web site
+	
+	done = fillpage.push_response(driver, values)
+	if done:
+		cleanup()
+		driver.quit()
+		break_CAPTCHA(url, speech_key, convert_key)
+	else:
+		#cleanup()
+		#driver.quit()
+		pass
 
+def cleanup():
+	args = ' '.join(
+		['rm',
+		'out.wav audio.mp3 Sounds/*.wav trash values.b'
+		])
 
-
+	subprocess.Popen(args, shell=True).wait()
 
 url = "http://webinsight.cs.washington.edu/projects/audiocaptchas/"
+url2 = "https://www.cybrary.it/register/"
 
 google_key = apiKey.getKey("Keys/google.key")
 convert_key = apiKey.getKey("Keys/cc.key")
